@@ -8,9 +8,23 @@ export class BluetoothService {
    * Request a device with Heart Rate service
    */
   public async requestDevice(): Promise<BluetoothDevice> {
+    // 1. Check for Secure Context (Required for Web Bluetooth)
+    if (!window.isSecureContext) {
+      const origin = window.location.origin;
+      throw new Error(
+        `Web Bluetooth strictly requires HTTPS.\n\n` +
+        `To use on HTTP (${origin}):\n` +
+        `1. Go to: chrome://flags/#unsafely-treat-insecure-origin-as-secure\n` +
+        `2. Enable it.\n` +
+        `3. Add "${origin}" to the text box.\n` +
+        `4. Click Relaunch.`
+      );
+    }
+
+    // 2. Check Browser Support
     // @ts-ignore - navigator.bluetooth is experimental
     if (!navigator.bluetooth) {
-      throw new Error("Web Bluetooth API is not available in this browser.");
+      throw new Error("Web Bluetooth API is not available in this browser. Please use Chrome, Edge, or Opera on Desktop/Android.");
     }
 
     try {

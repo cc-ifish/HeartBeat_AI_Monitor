@@ -105,7 +105,7 @@ const App: React.FC = () => {
               </button>
               
               {error && (
-                <div className="mt-4 p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-200 text-sm animate-fade-in">
+                <div className="mt-4 p-4 bg-red-900/40 border border-red-700/50 rounded-lg text-red-200 text-sm animate-fade-in text-left whitespace-pre-wrap font-mono">
                   {error}
                 </div>
               )}
