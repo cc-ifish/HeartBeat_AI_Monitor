@@ -1,7 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, Suspense } from 'react';
 import { bluetoothService } from './services/bluetoothService';
-import FloatingMonitor from './components/FloatingMonitor';
 import { HeartRateSample, DeviceInfo } from './types';
+
+// Lazy load the chart component to split the bundle (optimizes chunk size)
+const FloatingMonitor = React.lazy(() => import('./components/FloatingMonitor'));
 
 const App: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -165,14 +167,20 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Floating Monitor Component - Only shown when connected */}
+      {/* Floating Monitor Component - Lazy Loaded */}
       {isConnected && deviceInfo && (
-        <FloatingMonitor 
-          data={history} 
-          deviceName={deviceInfo.name} 
-          isConnected={isConnected}
-          onDisconnect={handleDisconnect}
-        />
+        <Suspense fallback={
+          <div className="fixed top-20 left-5 px-4 py-2 bg-gray-800/80 rounded-lg text-white border border-gray-700 shadow-lg">
+            Loading Chart...
+          </div>
+        }>
+          <FloatingMonitor 
+            data={history} 
+            deviceName={deviceInfo.name} 
+            isConnected={isConnected}
+            onDisconnect={handleDisconnect}
+          />
+        </Suspense>
       )}
 
     </div>
