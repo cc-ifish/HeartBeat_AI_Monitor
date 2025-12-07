@@ -1,0 +1,7 @@
+{
+  "name": "HeartBeat AI Monitor",
+  "description": "Connects to BLE heart rate monitors to display real-time data in a floating window and provides AI-driven health insights.",
+  "requestFramePermissions": [
+    "bluetooth"
+  ]
+}
