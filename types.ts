@@ -8,11 +8,6 @@ export interface DeviceInfo {
   name: string;
 }
 
-export interface AIInsight {
-  status: 'idle' | 'loading' | 'success' | 'error';
-  message: string;
-}
-
 // Web Bluetooth Types (Simplified)
 export interface BluetoothDevice extends EventTarget {
   id: string;

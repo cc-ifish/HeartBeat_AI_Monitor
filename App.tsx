@@ -79,11 +79,11 @@ const App: React.FC = () => {
         
         <div className="text-center max-w-2xl">
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-purple-500">
-            HeartBeat AI
+            HeartBeat Monitor
           </h1>
           <p className="text-xl text-gray-400 mb-8 font-light">
-            Real-time BLE Heart Rate Monitor powered by Gemini AI. 
-            Connect your fitness band to visualize your pulse and receive instant health insights.
+            Real-time BLE Heart Rate Monitor. 
+            Connect your fitness band to visualize your pulse in real-time.
           </p>
 
           {!isConnected ? (

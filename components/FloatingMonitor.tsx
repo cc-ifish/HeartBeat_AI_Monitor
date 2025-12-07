@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HeartRateSample, AIInsight } from '../types';
+import { HeartRateSample } from '../types';
 import { LineChart, Line, YAxis, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
-import { analyzeHeartRate } from '../services/geminiService';
 
 interface FloatingMonitorProps {
   data: HeartRateSample[];
@@ -19,7 +18,6 @@ const FloatingMonitor: React.FC<FloatingMonitorProps> = ({
   const [position, setPosition] = useState({ x: 20, y: 80 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [insight, setInsight] = useState<AIInsight>({ status: 'idle', message: '' });
   
   const currentBPM = data.length > 0 ? data[data.length - 1].bpm : '--';
   const windowRef = useRef<HTMLDivElement>(null);
@@ -62,17 +60,6 @@ const FloatingMonitor: React.FC<FloatingMonitorProps> = ({
       window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging, dragOffset]);
-
-  // AI Analysis Handler
-  const handleAnalyze = async () => {
-    setInsight({ status: 'loading', message: 'Analyzing...' });
-    try {
-      const result = await analyzeHeartRate(data);
-      setInsight({ status: 'success', message: result });
-    } catch (e) {
-      setInsight({ status: 'error', message: 'Failed to analyze.' });
-    }
-  };
 
   return (
     <div
@@ -160,28 +147,6 @@ const FloatingMonitor: React.FC<FloatingMonitorProps> = ({
             </LineChart>
           </ResponsiveContainer>
         </div>
-
-        {/* AI Insight Section */}
-        <div className="mt-4 pt-4 border-t border-gray-700">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-semibold text-purple-400 uppercase">AI Insight</span>
-            <button 
-              onClick={handleAnalyze}
-              disabled={insight.status === 'loading' || data.length < 5}
-              className="text-xs bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white px-2 py-1 rounded transition-colors"
-            >
-              {insight.status === 'loading' ? 'Thinking...' : 'Analyze'}
-            </button>
-          </div>
-          <div className="min-h-[3rem] text-sm text-gray-300 leading-snug">
-            {insight.message ? (
-              <span className="animate-fade-in">{insight.message}</span>
-            ) : (
-              <span className="text-gray-600 italic">Click analyze for Gemini powered insights.</span>
-            )}
-          </div>
-        </div>
-
       </div>
     </div>
   );
