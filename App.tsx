@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { bluetoothService } from './services/bluetoothService';
 import FloatingMonitor from './components/FloatingMonitor';
 import { HeartRateSample, DeviceInfo } from './types';
@@ -9,6 +9,14 @@ const App: React.FC = () => {
   const [history, setHistory] = useState<HeartRateSample[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isSecure, setIsSecure] = useState(true);
+
+  useEffect(() => {
+    // Check for Secure Context on mount
+    if (typeof window !== 'undefined' && !window.isSecureContext) {
+      setIsSecure(false);
+    }
+  }, []);
 
   // Handle new incoming data
   const handleHeartRateUpdate = useCallback((bpm: number) => {
@@ -85,6 +93,25 @@ const App: React.FC = () => {
             Real-time BLE Heart Rate Monitor. 
             Connect your fitness band to visualize your pulse in real-time.
           </p>
+
+          {!isSecure && (
+            <div className="mb-8 p-6 bg-yellow-900/40 border border-yellow-700/50 rounded-xl text-left">
+              <h3 className="text-yellow-400 font-bold text-lg mb-2 flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Insecure Context Detected (HTTP)
+              </h3>
+              <p className="text-yellow-200/80 mb-4">
+                Web Bluetooth typically requires HTTPS. To use this app over HTTP, you must enable a specific Chrome flag:
+              </p>
+              <ol className="list-decimal list-inside space-y-2 text-sm text-yellow-100 font-mono bg-black/30 p-4 rounded-lg">
+                <li>Copy this: <span className="select-all text-white font-bold">chrome://flags/#unsafely-treat-insecure-origin-as-secure</span></li>
+                <li>Paste it into a new tab's address bar.</li>
+                <li>Enable the "Insecure origins treated as secure" flag.</li>
+                <li>Add your current URL (<span className="select-all text-white">{window.location.origin}</span>) to the text box.</li>
+                <li>Click the "Relaunch" button at the bottom of that page.</li>
+              </ol>
+            </div>
+          )}
 
           {!isConnected ? (
             <div className="space-y-4">
